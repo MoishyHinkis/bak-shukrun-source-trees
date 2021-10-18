@@ -1,7 +1,7 @@
 const db = require("electron-db");
 const path = require("path");
 const fs = require("fs");
-const ExcelJS = require("exceljs");
+const  ExcelJS = require("exceljs");
 const { ipcRenderer } = require("electron");
 
 const location = path.join(__dirname, "../database");

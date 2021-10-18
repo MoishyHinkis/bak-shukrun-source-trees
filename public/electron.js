@@ -12,7 +12,7 @@ function createWindow() {
     height: 600,
     autoHideMenuBar: true,
     webPreferences: {
-      preload: path.join(__dirname, "/preload.js"),
+      preload: path.join(__dirname, "../static/preload.js"),
     },
   });
 
@@ -59,7 +59,10 @@ ipcMain.on("update", (event, sources) => {
   update.loadURL(
     isDev
       ? "http://localhost:3000/#/update/" + sources
-      : `file://${path.join(__dirname, "../build/index.html#/updateSources")}`
+      : `file://${path.join(
+          __dirname,
+          "../build/index.html#/update/" + sources
+        )}`
   );
   if (isDev) {
     update.webContents.openDevTools({ mode: "detach" });
