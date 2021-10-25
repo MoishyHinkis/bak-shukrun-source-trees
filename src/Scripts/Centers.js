@@ -12,13 +12,12 @@ function newCenter(centers, id) {
 }
 
 function updateCenter(centers, update) {
-  let cen = centers.map((center) => {
+  return centers.map((center) => {
     if (update.id === center.id) {
       return update;
     }
     return center;
   });
-  return cen;
 }
 
 function updateCenters(centers, updates) {

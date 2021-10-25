@@ -12,7 +12,7 @@ function createWindow() {
     height: 600,
     autoHideMenuBar: true,
     webPreferences: {
-      preload: path.join(__dirname, "../static/preload.js"),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -22,9 +22,7 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
-  if (isDev) {
-    win.webContents.openDevTools({ mode: "detach" });
-  }
+  if (isDev) win.webContents.openDevTools({ mode: "detach" });
 }
 app.whenReady().then(createWindow);
 app.on("window-all-closed", () => {
@@ -50,6 +48,7 @@ ipcMain.on("update", (event, sources) => {
   update = new BrowserWindow({
     width: 800,
     height: 600,
+    autoHideMenuBar: true,
     parent: win,
     modal: true,
     webPreferences: {
@@ -58,13 +57,15 @@ ipcMain.on("update", (event, sources) => {
   });
   update.loadURL(
     isDev
-      ? "http://localhost:3000/#/update/" + sources
+      ? `http://localhost:3000/#/update/${sources}`
       : `file://${path.join(
           __dirname,
-          "../build/index.html#/update/" + sources
-        )}`
+          "../build/index.html#update"
+        )}/${sources}`
   );
-  if (isDev) {
-    update.webContents.openDevTools({ mode: "detach" });
-  }
+  if (isDev) update.webContents.openDevTools({ mode: "detach" });
+});
+
+ipcMain.on("setCenters", () => {
+  dialog.showMessageBox({ message: "saved", type: "none", title: "saved" });
 });

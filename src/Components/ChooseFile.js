@@ -6,10 +6,10 @@ function ChooseFile(params) {
 
   const process = (event) => {
     event.preventDefault();
-    if (
-      typeof fileValue !== "undefined" &&
-      typeof anotehrFile !== "undefined"
-    ) {
+    if (typeof anotehrFile === "undefined")
+      alert("שימ/י לב נבחר רק קובץ רווח והפסד, ללא קובץ רכוש קבוע");
+
+    if (typeof fileValue !== "undefined") {
       window.compairExcel.allFunctions(
         fileValue,
         "DataSheet",
@@ -17,8 +17,6 @@ function ChooseFile(params) {
         window.getSourceTree.getCenters(params.loading),
         anotehrFile
       );
-      setFileValue();
-      setAnotherFile();
     } else alert("ודאי שאכן יש שני קבצים");
   };
 

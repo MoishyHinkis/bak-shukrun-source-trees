@@ -1,18 +1,17 @@
 const db = require("electron-db");
 const path = require("path");
 const fs = require("fs");
-const  ExcelJS = require("exceljs");
+const os = require("os");
+const ExcelJS = require("exceljs");
 const { ipcRenderer } = require("electron");
-
-const location = path.join(__dirname, "../database");
 
 function saveCenters(dbName, name, centers) {
   if (validate(dbName)) {
-    db.updateRow(dbName, location, name, { centers }, (succ, msg) => {
+    db.updateRow(dbName, name, { centers }, (succ, msg) => {
       if (!succ) {
         createCenters(dbName, name);
         saveCenters(dbName, name, centers);
-      }
+      } else ipcRenderer.send("setCenters");
     });
   } else alert("database do not validate");
 }
@@ -20,13 +19,14 @@ function saveCenters(dbName, name, centers) {
 function getCenters(dbName) {
   let centers = [];
   if (validate(dbName)) {
-    db.getRows(dbName, location, { name: dbName }, (succ, data) => {
-      if (succ && data.length > 0) centers = data[0].centers;
-      else
+    db.getRows(dbName, { name: dbName }, (succ, data) => {
+      if (succ) {
+        if (data.length > 0) centers = data[0].centers;
+      } else
         alert(
           "get centers: " +
             data +
-            "this alert is shown because there a problem with this table, maybe it's beacuse it's empty' try to fill it up, if this alert still shown, please talk to manager"
+            "this alert is shown because there a problem with this table, please talk to you'r manager"
         );
     });
   } else alert("database do not validate");
@@ -34,17 +34,21 @@ function getCenters(dbName) {
 }
 
 const createCenters = (dbName, name) => {
-  db.insertTableContent(dbName, location, name, (succ, msg) => {
+  db.insertTableContent(dbName, name, (succ, msg) => {
     alert("create centers" + succ + msg);
   });
 };
 
 const validate = (dbName) => {
   let valid = false;
-  if (fs.existsSync(path.join(location, `${dbName}.json`))) {
-    valid = db.valid(dbName, location);
+  if (
+    fs.existsSync(
+      path.join(os.homedir(), `AppData/Roaming/excel-2/${dbName}.json`)
+    )
+  ) {
+    valid = db.valid(dbName);
   } else {
-    db.createTable(dbName, location, (succ, msg) => {
+    db.createTable(dbName, (succ, msg) => {
       valid = succ;
       if (valid) {
         alert(
@@ -56,9 +60,9 @@ const validate = (dbName) => {
   return valid;
 };
 
-async function exportToExcel(file, sources, treeHeader, sourceHeader) {
+async function exportToExcel(sheetNaem, sources, treeHeader, sourceHeader) {
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("Main");
+  const worksheet = workbook.addWorksheet(sheetNaem);
   let Aval = sources.map((source) => {
     return source.tree;
   });
@@ -81,13 +85,19 @@ async function importFromExcel(file, sheetName) {
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(file);
   const worksheet = workbook.getWorksheet(sheetName);
+  if (typeof worksheet === "undefined") {
+    alert(`אנא ודא/י שיש בקובץ טבלה בשם ${sheetName}`);
+    return;
+  }
   const Aval = worksheet.getColumn("A").values;
   const Bval = worksheet.getColumn("B").values;
   Aval.forEach((value, index) => {
+    const tree =
+      sheetName === "loadingCenters" ? Number(Aval[index]) * 100 : Aval[index];
     centers.push({
       key: index - 2,
-      tree: Bval[index],
-      source: Aval[index],
+      tree: tree,
+      source: Bval[index],
       id: index - 2,
     });
   });

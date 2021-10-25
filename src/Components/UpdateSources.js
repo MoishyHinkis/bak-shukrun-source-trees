@@ -19,7 +19,7 @@ function UpdateSources() {
   };
 
   const removeCenter = () => {
-    alert("לא ניתן להסיר מרכזים בשלב זה, נא להזין ערכים לכל מרכזיהרווח");
+    alert("לא ניתן להסיר מרכזים בשלב זה, נא להזין ערכים לכל מרכזי הרווח");
   };
 
   const updateAll = () => {
@@ -51,23 +51,26 @@ function UpdateSources() {
   };
   return (
     <div>
-      <button
-        onClick={() => {
-          updateAll();
-          window.close();
-        }}
-      >
-        save
-      </button>
-      <table>
-        <thead>
-          <tr>
-            <th>tree</th>
-            <th>source</th>
-          </tr>
-        </thead>
-        <Centers></Centers>
-      </table>
+      <div class="grid justify-items-center">
+        <button
+          class="place-self-center bg-gray-200 border-black border-2 px-8"
+          onClick={() => {
+            updateAll();
+            window.close();
+          }}
+        >
+          save
+        </button>
+        <table>
+          <thead>
+            <tr>
+              <th>עץ מרכזי רווח</th>
+              <th>מרכז רווח</th>
+            </tr>
+          </thead>
+          <Centers></Centers>
+        </table>
+      </div>
     </div>
   );
 }

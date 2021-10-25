@@ -26,9 +26,6 @@ function NavigationBar(params) {
         <div class={loadingStyle}>
           <Link to="/loading">טבלת שיעורי העמסה</Link>
         </div>
-        <div class={loadingStyle}>
-          <Link to="/check">check</Link>
-        </div>
       </div>
       <div>{params.page}</div>
     </div>

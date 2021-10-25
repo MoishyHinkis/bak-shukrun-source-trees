@@ -1,15 +1,21 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 function Center(params) {
+  const update = (event, newValue, tree) => {
+    event.preventDefault();
+    params.update(newValue);
+  };
+
   return (
     <tr>
       <td>
+        {params.treeNote}
         <input
-          type="text"
+          type={params.treeType}
           placeholder="הכניסי עץ מרכז רווח"
           defaultValue={params.tree}
           onBlur={(event) => {
-            params.update({
+            update(event, {
               key: params.id,
               tree: event.target.value,
               source: params.source,
@@ -25,7 +31,7 @@ function Center(params) {
           class="w-56"
           defaultValue={params.source}
           onBlur={(event) => {
-            params.update({
+            update(event, {
               key: params.id,
               tree: params.tree,
               source: event.target.value,
@@ -36,7 +42,7 @@ function Center(params) {
       </td>
       <td>
         <button
-        class="text-red-500"
+          class="text-red-500"
           onClick={() => {
             params.remove(params.id);
           }}

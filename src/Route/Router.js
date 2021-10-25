@@ -1,10 +1,10 @@
 import React from "react";
 import { HashRouter, Route, Switch } from "react-router-dom";
 import ChooseFile from "../Components/ChooseFile";
-import TreeTable from "../Components/TreeTable";
+import LoadingTree from "../Components/LoadingTree";
+import SourcesTree from "../Components/SourcesTree";
 import UpdateSources from "../Components/UpdateSources";
 import NavigationBar from "../Layouts/NavigationBar";
-import Chec  from "../Components/check";
 
 const Home = () => {
   return (
@@ -25,13 +25,13 @@ const Sources = () => {
     <div>
       <NavigationBar
         page={
-          <TreeTable
+          <SourcesTree
             show="הראה מרכזי רווח"
             hide="הסתר מרכזי רווח"
             tree="עץ מרכזי רווח"
             source="מרכז רווח"
             data="SourceCenters"
-          ></TreeTable>
+          ></SourcesTree>
         }
       />
     </div>
@@ -42,13 +42,13 @@ const Loading = () => {
     <div>
       <NavigationBar
         page={
-          <TreeTable
+          <LoadingTree
             show="הראה שיעור העמסה למרכזי רווח"
             hide=" הסתר שיעורי העמסה למרכזי רווח"
             tree="שיעור העמסה"
             source="מרכז העמסה"
             data="loadingCenters"
-          ></TreeTable>
+          ></LoadingTree>
         }
       />
     </div>
@@ -56,14 +56,6 @@ const Loading = () => {
 };
 const Update = () => {
   return <UpdateSources></UpdateSources>;
-};
-
-const Check = () => {
-  return (
-    <div>
-      <NavigationBar page={<Chec />} />
-    </div>
-  );
 };
 
 const mainRouter = () => {
@@ -75,7 +67,6 @@ const mainRouter = () => {
           <Route exact path="/sources" component={Sources} />
           <Route exact path="/loading" component={Loading} />
           <Route exact path="/update/:sources" component={Update} />
-          <Route exact path="/check/" component={Check} />
         </Switch>
       </div>
     </HashRouter>

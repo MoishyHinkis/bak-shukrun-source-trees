@@ -5,8 +5,6 @@ const { ipcRenderer } = require("electron");
 const SourceTree = require("./SourceTree");
 const { deleteRow } = require("electron-db");
 
-const workbook = new ExcelJS.Workbook();
-
 let worksheet,
   Aval,
   Bavl,
@@ -22,6 +20,7 @@ let worksheet,
   Fcol,
   Gcol,
   Hcol;
+const workbook = new ExcelJS.Workbook();
 
 const loadFile = async (file, sheetName) => {
   await workbook.xlsx.load(file);
@@ -118,7 +117,12 @@ function GminusF() {
 
 async function FixedAssets(file) {
   const wb = new ExcelJS.Workbook();
-  await wb.xlsx.load(file);
+  try {
+    await wb.xlsx.load(file);
+  } catch (error) {
+    alert("ישנה שגיאה בקובץ רכוש קבוע");
+    return true;
+  }
   let ws = wb.getWorksheet("DataSheet");
   if (typeof ws === "undefined") {
     return false;
@@ -131,7 +135,6 @@ async function FixedAssets(file) {
         ws.getRow(rowNumber).getCell("H").value !==
         0
     ) {
-      console.log(cell.value);
       let row = [
         "רכוש קבוע",
         "רכוש קבוע",
@@ -166,7 +169,7 @@ const loadingCenter = (loading) => {
             case 8:
               return loadCenter.source;
             case 7:
-              return cell * loadCenter.tree;
+              return (cell * loadCenter.tree) / 100;
             case 5:
               return "מרכז העמסה";
 
@@ -196,8 +199,8 @@ async function allFunctions(file, sheetName, sources, loading, anotehrFile) {
         ResetG();
         await write();
       }
-    } else alert('וודאי שיש גליון בשם "FixedAssets"');
-  } else alert('לא נמצא גליון בשם "DataSheet" ודאי ששם הגיליון הוא אכן');
+    } else alert('וודאי שיש בקובץ רכוש קבוע גליון בשם "DataSheet"');
+  } else alert('וודאי שיש בקובץ רווח והפסד גליון בשם "DataSheet"');
 }
 
 exports.allFunctions = allFunctions;

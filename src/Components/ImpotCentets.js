@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 
 function ImportCenters(params) {
   const [file, setFile] = useState();
-  const [hasFile, setHasFile] = useState(false);
 
   useEffect(() => {
-    if (hasFile) {
-      console.log("hasfile");
+    if (typeof file !== "undefined") {
       window.getSourceTree.importFromExcel(file, params.sheetName);
-      setHasFile(false);
+      document.getElementById("importCenters").value = null;
       setFile();
+      alert("imported");
     }
-  }, [hasFile, params.sheetName, file]);
+  }, [params.sheetName, file]);
 
   return (
     <div>
@@ -32,7 +31,6 @@ function ImportCenters(params) {
           required
           onChange={(event) => {
             setFile(event.target.files[0]);
-            setHasFile(true);
           }}
         />
       </div>
