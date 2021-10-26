@@ -2,8 +2,8 @@ const db = require("electron-db");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-const ExcelJS = require("exceljs");
-const { ipcRenderer } = require("electron");
+const xlsx = require("xlsx");
+const { ipcRenderer, shell } = require("electron");
 
 function saveCenters(dbName, name, centers) {
   if (validate(dbName)) {
@@ -60,53 +60,59 @@ const validate = (dbName) => {
   return valid;
 };
 
-async function exportToExcel(sheetNaem, sources, treeHeader, sourceHeader) {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet(sheetNaem);
-  let Aval = sources.map((source) => {
-    return source.tree;
-  });
-  let Bval = sources.map((source) => {
-    return source.source;
-  });
-  Aval.unshift(treeHeader);
-  Bval.unshift(sourceHeader);
-  worksheet.getColumn("A").values = Aval;
-  worksheet.getColumn("B").values = Bval;
-
-  const locate = ipcRenderer.sendSync("save");
-  if (!locate.canceled) {
-    await workbook.xlsx.writeFile(locate.filePath);
-  }
-}
-
-async function importFromExcel(file, sheetName) {
-  let centers = [];
-  const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.load(file);
-  const worksheet = workbook.getWorksheet(sheetName);
-  if (typeof worksheet === "undefined") {
-    alert(`אנא ודא/י שיש בקובץ טבלה בשם ${sheetName}`);
-    return;
-  }
-  const Aval = worksheet.getColumn("A").values;
-  const Bval = worksheet.getColumn("B").values;
-  Aval.forEach((value, index) => {
-    const tree =
-      sheetName === "loadingCenters" ? Number(Aval[index]) * 100 : Aval[index];
-    centers.push({
-      key: index - 2,
-      tree: tree,
-      source: Bval[index],
-      id: index - 2,
+const exportToXlsx = async (sheetName, sources, treeHeader, sourceHeader) => {
+  try {
+    let rows = sources.map((source) => {
+      if (sheetName === "loadingCenters") {
+        return [source.tree + "%", source.source];
+      }
+      return [source.tree, source.source];
     });
-  });
-  centers.shift();
-
-  saveCenters(sheetName, { name: sheetName }, centers);
-}
+    rows.unshift([treeHeader, sourceHeader]);
+    var ws = xlsx.utils.aoa_to_sheet(rows);
+    var wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, sheetName);
+    const locate = ipcRenderer.sendSync("save");
+    if (!locate.canceled) {
+      xlsx.writeFile(wb, locate.filePath);
+      shell.openPath(locate.filePath);
+    }
+  } catch (error) {
+    console.log(error);
+    alert("שגיאה ביבוא הקובץ פנה למנהל");
+  }
+};
+const importFromXlsx = async (file, sheetName) => {
+  file
+    .arrayBuffer()
+    .then((data) => {
+      var wb = xlsx.read(data);
+      var ws = wb.Sheets[sheetName];
+      let centers = [];
+      for (
+        let index = 1;
+        index <= xlsx.utils.decode_range(ws["!ref"]).e.r;
+        index++
+      ) {
+        const Acell = ws[xlsx.utils.encode_cell({ r: index, c: 0 })];
+        const Bcell = ws[xlsx.utils.encode_cell({ r: index, c: 1 })];
+        centers.push({
+          key: index - 1,
+          tree: sheetName === "loadingCenters" ? Acell.v * 100 : Acell.v,
+          source: Bcell.v,
+          id: index - 1,
+        });
+      }
+      console.log("XLSX: ", centers);
+      saveCenters(sheetName, { name: sheetName }, centers);
+    })
+    .catch((err) => {
+      console.log(err);
+      alert("שגיאה ביבוא הקובץ פנה למנהל");
+    });
+};
 
 exports.saveCenters = saveCenters;
 exports.getCenters = getCenters;
-exports.exportToExcel = exportToExcel;
-exports.importFromExcel = importFromExcel;
+exports.exportToXlsx = exportToXlsx;
+exports.importFromXlsx = importFromXlsx;

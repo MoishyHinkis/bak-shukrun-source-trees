@@ -1,5 +1,11 @@
 const path = require("path");
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  dialog,
+  BrowserView,
+} = require("electron");
 const isDev = require("electron-is-dev");
 const { platform } = require("os");
 

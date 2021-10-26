@@ -16,13 +16,13 @@
     "electrojs": "^1.0.5",
     "electron-db": "^0.15.7",
     "electron-is-dev": "^2.0.0",
-    "exceljs": "^4.3.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "tailwindcss": "^2.2.17",
-    "web-vitals": "^1.0.1"
+    "web-vitals": "^1.0.1",
+    "xlsx": "^0.17.3"
   },
   "main": "./public/electron.js",
   "homepage": "./",

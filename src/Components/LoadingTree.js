@@ -78,7 +78,7 @@ function Header(params) {
           <button
             className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={() => {
-              window.getSourceTree.exportToExcel(
+              window.getSourceTree.exportToXlsx(
                 params.data,
                 centerData,
                 params.tree,
@@ -105,8 +105,12 @@ function Header(params) {
         <table>
           <thead>
             <tr>
-              <th className={"border-2 border-black px-8 py-2"}>{params.tree}</th>
-              <th className={"border-2 border-black px-8 py-2"}>{params.source}</th>
+              <th className={"border-2 border-black px-8 py-2"}>
+                {params.tree}
+              </th>
+              <th className={"border-2 border-black px-8 py-2"}>
+                {params.source}
+              </th>
             </tr>
           </thead>
           <Centers></Centers>
@@ -120,7 +124,9 @@ function Header(params) {
     <div>
       <div className={"grid"}>
         <button
-          className={"justify-self-center m-8 p-4 bg-gray-100 py-4 border-black border-2"}
+          className={
+            "justify-self-center m-8 p-4 bg-gray-100 py-4 border-black border-2"
+          }
           onClick={() => {
             setShow(!show);
           }}

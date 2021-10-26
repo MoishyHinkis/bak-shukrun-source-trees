@@ -5,7 +5,7 @@ function ImportCenters(params) {
 
   useEffect(() => {
     if (typeof file !== "undefined") {
-      window.getSourceTree.importFromExcel(file, params.sheetName);
+      window.getSourceTree.importFromXlsx(file, params.sheetName);
       document.getElementById("importCenters").value = null;
       setFile();
       alert("imported");

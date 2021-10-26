@@ -67,7 +67,7 @@ function Header(params) {
           <button
             className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={() => {
-              window.getSourceTree.exportToExcel(
+              window.getSourceTree.exportToXlsx(
                 params.data,
                 centerData,
                 params.tree,
