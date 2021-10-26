@@ -28,7 +28,7 @@ function Center(params) {
         <input
           type="text"
           placeholder="הכניסי מרכז רווח"
-          class="w-56"
+          className={"w-56"}
           defaultValue={params.source}
           onBlur={(event) => {
             update(event, {
@@ -42,7 +42,7 @@ function Center(params) {
       </td>
       <td>
         <button
-          class="text-red-500"
+          className={"text-red-500"}
           onClick={() => {
             params.remove(params.id);
           }}

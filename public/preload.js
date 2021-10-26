@@ -3,7 +3,5 @@ contextBridge.exposeInMainWorld(
   "getSourceTree",
   require("../assets/Modules/SourceTree")
 );
-contextBridge.exposeInMainWorld(
-  "compairExcel",
-  require("../assets/Modules/CompairExcel")
-);
+
+contextBridge.exposeInMainWorld("excel", require("../assets/Modules/Excel"));

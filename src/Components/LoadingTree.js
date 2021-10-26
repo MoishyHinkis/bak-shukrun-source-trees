@@ -49,7 +49,7 @@ function Header(params) {
     let style = "";
     if (sum !== 100) style = "text-red-500";
 
-    return <p class={style}>{sum + "%"}</p>;
+    return <p className={style}>{sum + "%"}</p>;
   };
 
   const save = () => {
@@ -65,10 +65,10 @@ function Header(params) {
 
   const GetTable = () => {
     return show ? (
-      <div class="grid justify-items-center">
-        <div class="grid grid-cols-2 mb-4">
+      <div className={"grid justify-items-center"}>
+        <div className={"grid grid-cols-2 mb-4"}>
           <button
-            class="bg-gray-200 p-1 border-black border-2 m-2"
+            className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={() => {
               newCenter(centerData.length);
             }}
@@ -76,7 +76,7 @@ function Header(params) {
             הוסף מרכז
           </button>
           <button
-            class="bg-gray-200 p-1 border-black border-2 m-2"
+            className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={() => {
               window.getSourceTree.exportToExcel(
                 params.data,
@@ -90,13 +90,13 @@ function Header(params) {
           </button>
 
           <button
-            class="bg-gray-200 p-1 border-black border-2 m-2"
+            className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={save}
           >
             save
           </button>
           <button
-            class="bg-gray-200 p-1 border-black border-2 m-2"
+            className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={cencal}
           >
             cencal
@@ -105,8 +105,8 @@ function Header(params) {
         <table>
           <thead>
             <tr>
-              <th class="border-2 border-black px-8 py-2">{params.tree}</th>
-              <th class="border-2 border-black px-8 py-2">{params.source}</th>
+              <th className={"border-2 border-black px-8 py-2"}>{params.tree}</th>
+              <th className={"border-2 border-black px-8 py-2"}>{params.source}</th>
             </tr>
           </thead>
           <Centers></Centers>
@@ -118,9 +118,9 @@ function Header(params) {
 
   return (
     <div>
-      <div class="grid">
+      <div className={"grid"}>
         <button
-          class="justify-self-center m-8 p-4 bg-gray-100 py-4 border-black border-2"
+          className={"justify-self-center m-8 p-4 bg-gray-100 py-4 border-black border-2"}
           onClick={() => {
             setShow(!show);
           }}

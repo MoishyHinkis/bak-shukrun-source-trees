@@ -53,11 +53,11 @@ function Header(params) {
 
   const GetTable = () => {
     return show ? (
-      <div class="grid justify-items-center">
+      <div className={"grid justify-items-center"}>
         <div></div>
-        <div class="grid grid-cols-2 mb-4">
+        <div className={"grid grid-cols-2 mb-4"}>
           <button
-            class="bg-gray-200 p-1 border-black border-2 m-2"
+            className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={() => {
               newCenter(centerData.length);
             }}
@@ -65,7 +65,7 @@ function Header(params) {
             הוסף מרכז
           </button>
           <button
-            class="bg-gray-200 p-1 border-black border-2 m-2"
+            className={"bg-gray-200 p-1 border-black border-2 m-2"}
             onClick={() => {
               window.getSourceTree.exportToExcel(
                 params.data,

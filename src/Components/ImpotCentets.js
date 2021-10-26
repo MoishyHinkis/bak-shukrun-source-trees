@@ -14,9 +14,9 @@ function ImportCenters(params) {
 
   return (
     <div>
-      <div class="grid justify-items-center">
+      <div className={"grid justify-items-center"}>
         <label htmlFor="importCenters">
-          <div class="p-4 bg-gray-200 cursor-pointer">
+          <div className={"p-4 bg-gray-200 cursor-pointer"}>
             {typeof file === "undefined"
               ? `יבוא טבלת ${params.import} מאקסל`
               : file.name}
@@ -24,7 +24,7 @@ function ImportCenters(params) {
         </label>
         <input
           id="importCenters"
-          class="hidden"
+          className={"hidden"}
           name="importCenters"
           type="file"
           accept=".xlsx"
