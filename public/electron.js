@@ -22,8 +22,7 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
-  // if (isDev)
-  win.webContents.openDevTools({ mode: "detach" });
+  if (isDev) win.webContents.openDevTools({ mode: "detach" });
 }
 app.whenReady().then(createWindow);
 app.on("window-all-closed", () => {
