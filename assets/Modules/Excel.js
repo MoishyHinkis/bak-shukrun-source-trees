@@ -1,5 +1,5 @@
 const SourceTree = require("./SourceTree");
-const { ipcRenderer, shell } = require("electron");
+const { ipcRenderer } = require("electron");
 const xlsx = require("xlsx");
 let wb, ws;
 
@@ -195,11 +195,26 @@ function updateSources(noSources, sources) {
   ipcRenderer.send("update", "SourceCenters");
 }
 
+const makePivot = (file) => {
+  const { spawn } = require("child_process");
+  const pythonProcess = spawn("python", ["./assets/Modules/py.py", file]);
+  pythonProcess.stdout.on("data", (data) => {
+    console.log("data: ", data.toString());
+  });
+
+  pythonProcess.stderr.on("data", (data) => {
+    console.log(`stderr: ${data}`);
+  });
+  pythonProcess.on("exit", (code, signal) => {
+    console.log(`exited with code ${code} and signal ${signal}`);
+  });
+};
+
 const save = () => {
   const location = ipcRenderer.sendSync("save");
   if (!location.canceled) {
     xlsx.writeFile(wb, location.filePath);
-    shell.openPath(location.filePath);
+    makePivot(location.filePath);
   }
 };
 

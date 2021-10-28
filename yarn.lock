@@ -8839,6 +8839,11 @@ pako@~1.0.5:
   resolved "https://registry.npmjs.org/pako/-/pako-1.0.11.tgz"
   integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
 
+pandas@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/pandas/-/pandas-0.0.3.tgz#2a11b02074f0ffcc0729c73235572e5adbb0f1f7"
+  integrity sha1-KhGwIHTw/8wHKccyNVcuWtuw8fc=
+
 parallel-transform@^1.1.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/parallel-transform/-/parallel-transform-1.2.0.tgz"
@@ -10019,6 +10024,13 @@ purgecss@^4.0.3:
     glob "^7.0.0"
     postcss "^8.2.1"
     postcss-selector-parser "^6.0.2"
+
+python-bridge@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/python-bridge/-/python-bridge-1.1.0.tgz#ec7d6a5540af62ed322cb040c6e259421be74a5a"
+  integrity sha512-qjQ0QB8p9cn/XDeILQH0aP307hV58lrmv0Opjyub68Um7FHdF+ZXlTqyxNkKaXOFk2QSkScoPWwn7U9GGnrkeQ==
+  dependencies:
+    bluebird "^3.5.0"
 
 q@^1.1.2:
   version "1.5.1"

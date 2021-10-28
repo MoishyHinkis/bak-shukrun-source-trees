@@ -1,11 +1,5 @@
 const path = require("path");
-const {
-  app,
-  BrowserWindow,
-  ipcMain,
-  dialog,
-  BrowserView,
-} = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const isDev = require("electron-is-dev");
 const { platform } = require("os");
 
@@ -28,7 +22,8 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
-  if (isDev) win.webContents.openDevTools({ mode: "detach" });
+  // if (isDev)
+  win.webContents.openDevTools({ mode: "detach" });
 }
 app.whenReady().then(createWindow);
 app.on("window-all-closed", () => {
