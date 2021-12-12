@@ -51,9 +51,9 @@ function UpdateSources() {
   };
   return (
     <div>
-      <div class="grid justify-items-center">
+      <div className={"grid justify-items-center"}>
         <button
-          class="place-self-center bg-gray-200 border-black border-2 px-8"
+          className={"place-self-center bg-gray-200 border-black border-2 px-8"}
           onClick={() => {
             updateAll();
             window.close();

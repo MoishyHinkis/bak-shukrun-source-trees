@@ -36,6 +36,10 @@
       "node_modules/**/*",
       "assets/**/*"
     ],
+    "extraResources":{
+      "from":"pydistpivot",
+      "to":"pydistpivot"
+    },
     "directories": {
       "buildResources": "public"
     },
@@ -48,9 +52,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently -k \"SET BROWSER=none && npm run start\" \"npm:electron\"",
-    "electron": "wait-on tcp:3000 && electron .",
-    "electron-win": "yarn build && electron-builder -w -c.extraMetadata.main=build/electron.js"
+    "dev": "concurrently -k \"SET BROWSER=none && npm start\" \"npm:electron\"",
+    "electron": "wait-on tcp:3000 && electronmon .",
+    "electron-win": "npm run build && electron-builder -w -c.extraMetadata.main=build/electron.js"
   },
   "eslintConfig": {
     "extends": [
@@ -70,6 +74,7 @@
     "concurrently": "^6.3.0",
     "electron": "^15.2.0",
     "electron-builder": "^22.13.1",
+    "electronmon": "^2.0.2",
     "wait-on": "^6.0.0"
   }
 }

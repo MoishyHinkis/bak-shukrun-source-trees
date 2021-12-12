@@ -16,14 +16,14 @@ function NavigationBar(params) {
 
   return (
     <div>
-      <div class="flex justify-between p-4 mx-24">
-        <div class={homeStyle}>
+      <div className={"flex justify-between p-4 mx-24"}>
+        <div className={homeStyle}>
           <Link to="/">דף ראשי</Link>
         </div>
-        <div class={sourcesStyle}>
+        <div className={sourcesStyle}>
           <Link to="/sources">טבלת עץ מרכזי רווח</Link>
         </div>
-        <div class={loadingStyle}>
+        <div className={loadingStyle}>
           <Link to="/loading">טבלת שיעורי העמסה</Link>
         </div>
       </div>

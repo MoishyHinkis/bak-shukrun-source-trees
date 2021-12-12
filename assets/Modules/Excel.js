@@ -1,68 +1,48 @@
 const SourceTree = require("./SourceTree");
-const { ipcRenderer } = require("electron");
+const { ipcRenderer, shell } = require("electron");
 const xlsx = require("xlsx");
-let wb, ws;
+const path = require("path");
+const { existsSync } = require("fs");
+
+let wb, ws, json;
 
 const loadGainFile = async (gainLoseFile) => {
   await gainLoseFile.arrayBuffer().then((data) => {
     wb = xlsx.read(data);
     ws = wb.Sheets["DataSheet"];
+    json = xlsx.utils.sheet_to_json(ws);
   });
 };
 
 const fixAssets = async (fixAssetsFile) => {
-  let fawb,
-    faws,
-    rows = [];
+  let fawb, faws;
   await fixAssetsFile.arrayBuffer().then((data) => {
     fawb = xlsx.read(data);
     faws = fawb.Sheets["DataSheet"];
-    for (
-      let index = 1;
-      index <= xlsx.utils.decode_range(faws["!ref"]).e.r;
-      index++
-    ) {
-      const Ccell = faws[xlsx.utils.encode_cell({ r: index, c: 2 })];
-      const Dcell = faws[xlsx.utils.encode_cell({ r: index, c: 3 })];
-      const Ecell = faws[xlsx.utils.encode_cell({ r: index, c: 4 })];
-      const Gcell = faws[xlsx.utils.encode_cell({ r: index, c: 6 })];
-      const Hcell = faws[xlsx.utils.encode_cell({ r: index, c: 7 })];
-      if (Gcell.v - Hcell.v !== 0) {
-        rows.push([
-          "רכוש קבוע",
-          "רכוש קבוע",
-          Dcell.v,
-          Ecell.v,
-          Ccell.v,
-          Gcell.v,
-          Hcell.v,
-        ]);
+    const fjson = xlsx.utils.sheet_to_json(faws);
+    for (let index = 0; index < fjson.length; index++) {
+      if (fjson[index]["סכום זכות לתקופה"] - fjson[index]["סכום חובה לתקופה"]) {
+        const newRow = {
+          "כותרת;": "רכוש קבוע",
+          סעיף: "רכוש קבוע",
+          חשבון: fjson[index]["חשבון"],
+          "תאור חשבון": fjson[index]["תאור חשבון"],
+          "מרכז רווח": fjson[index]["סעיף;"],
+          סכום: fjson[index]["סכום חובה לתקופה"],
+          "סכום 2": fjson[index]["סכום זכות לתקופה"],
+        };
+        json.push(newRow);
       }
     }
-    xlsx.utils.sheet_add_aoa(ws, rows, { origin: -1 });
   });
 };
 
 const GminusF = () => {
-  xlsx.utils.sheet_add_aoa(ws, [["סכום"]], {
-    origin: { r: 0, c: 6 },
+  json.forEach((row) => {
+    if (row["כותרת;"] === "הכנסות") {
+      row["סכום 2"] = -row["סכום"];
+    } else row["סכום 2"] = row["סכום"];
   });
-  for (
-    let index = 1;
-    index <= xlsx.utils.decode_range(ws["!ref"]).e.r;
-    index++
-  ) {
-    const Fcell = ws[xlsx.utils.encode_cell({ r: index, c: 5 })];
-    const Acell = ws[xlsx.utils.encode_cell({ r: index, c: 0 })];
-    if (Acell.v === "הכנסות") {
-      xlsx.utils.sheet_add_aoa(ws, [[-Fcell.v]], {
-        origin: { r: index, c: 6 },
-      });
-    } else
-      xlsx.utils.sheet_add_aoa(ws, [[Fcell.v]], {
-        origin: { r: index, c: 6 },
-      });
-  }
 };
 
 const compaireToSources = (sources) => {
@@ -73,105 +53,76 @@ const compaireToSources = (sources) => {
   let Sources = sources.map((source) => {
     return source.source;
   });
-  for (
-    let index = 1;
-    index <= xlsx.utils.decode_range(ws["!ref"]).e.r;
-    index++
-  ) {
-    const Ecell = ws[xlsx.utils.encode_cell({ r: index, c: 4 })];
+
+  json.forEach((row) => {
+    const sourceCenter = row["מרכז רווח"];
+    const indexInSources = Sources.indexOf(sourceCenter);
     if (
-      (Sources.indexOf(Ecell.v) === -1 ||
-        SourcesTree[Sources.indexOf(Ecell.v)] === "") &&
-      !noSource.includes(Ecell.v)
+      (indexInSources === -1 || sourceCenter === "") &&
+      !noSource.includes(sourceCenter)
     ) {
-      noSource.push(Ecell.v);
+      noSource.push(sourceCenter);
     }
-    xlsx.utils.sheet_add_aoa(ws, [[SourcesTree[Sources.indexOf(Ecell.v)]]], {
-      origin: { r: index, c: 7 },
-    });
-  }
+    row["עץ מרכזי רווח"] = SourcesTree[indexInSources];
+  });
+
   if (noSource.length > 0) {
     updateSources(noSource, sources);
     return false;
   }
-  xlsx.utils.sheet_add_aoa(ws, [["עץ מרכזי רווח"]], {
-    origin: { r: 0, c: 7 },
-  });
   return true;
 };
 
 const loadingCenter = (loading) => {
-  let rows = [];
-  for (
-    let index = 0;
-    index <= xlsx.utils.decode_range(ws["!ref"]).e.r;
-    index++
-  ) {
-    const Acell = ws[xlsx.utils.encode_cell({ r: index, c: 0 })];
-    const Bcell = ws[xlsx.utils.encode_cell({ r: index, c: 1 })];
-    const Ccell = ws[xlsx.utils.encode_cell({ r: index, c: 2 })];
-    const Dcell = ws[xlsx.utils.encode_cell({ r: index, c: 3 })];
-    const Ecell = ws[xlsx.utils.encode_cell({ r: index, c: 4 })];
-    const Fcell = ws[xlsx.utils.encode_cell({ r: index, c: 5 })];
-    const Gcell = ws[xlsx.utils.encode_cell({ r: index, c: 6 })];
-    const Hcell = ws[xlsx.utils.encode_cell({ r: index, c: 7 })];
+  let jrows = [];
+  json.forEach((row) => {
     if (
-      Acell.v !== "הכנסות" &&
-      Acell.v !== "רכוש קבוע" &&
-      Hcell.v === "מרכז בית יעקב כללי"
+      row["כותרת;"] !== "הכנסות" &&
+      row["כותרת;"] !== "רכוש קבוע" &&
+      row["עץ מרכזי רווח"] === "מרכז בית יעקב כללי"
     ) {
-      rows.push([
-        Acell.v,
-        Bcell.v,
-        Ccell.v,
-        Dcell.v,
-        Ecell.v,
-        Fcell.v,
-        Gcell.v,
-        Hcell.v,
-      ]);
+      jrows.push({
+        "כותרת;": row["כותרת;"],
+        סעיף: row["סעיף"],
+        חשבון: row["חשבון"],
+        "תאור חשבון": row["תאור חשבון"],
+        "מרכז רווח": row["מרכז רווח"],
+        סכום: row["סכום"],
+        "סכום 2": row["סכום 2"],
+        "עץ מרכזי רווח": row["עץ מרכזי רווח"],
+      });
     }
-  }
-  loading.forEach((loadCenter) => {
-    xlsx.utils.sheet_add_aoa(
-      ws,
-      rows.map((row) => {
-        return row.map((cell, index) => {
-          switch (index) {
-            case 7:
-              return loadCenter.source;
-            case 6:
-              return (cell * loadCenter.tree) / 100;
-            case 4:
-              return "מרכז העמסה";
-
-            default:
-              return cell;
-          }
-        });
-      }),
-
-      { origin: -1 }
-    );
   });
+  console.log(jrows);
+  loading.forEach((loadCenter) => {
+    jrows.forEach((jrow) => {
+      json.push({
+        "כותרת;": jrow["כותרת;"],
+        סעיף: jrow["סעיף"],
+        חשבון: jrow["חשבון"],
+        "תאור חשבון": jrow["תאור חשבון"],
+        "מרכז רווח": "מרכז העמסה",
+        סכום: jrow["סכום"],
+        "סכום 2": (jrow["סכום 2"] * loadCenter.tree) / 100,
+        "עץ מרכזי רווח": loadCenter.source,
+      });
+    });
+  });
+  console.log(json);
 };
-
 const resetG = () => {
-  for (
-    let index = 1;
-    index <= xlsx.utils.decode_range(ws["!ref"]).e.r;
-    index++
-  ) {
-    const Acell = ws[xlsx.utils.encode_cell({ r: index, c: 0 })];
-    const Hcell = ws[xlsx.utils.encode_cell({ r: index, c: 7 })];
-    if (
-      Acell.v !== "הכנסות" &&
-      Acell.v !== "רכוש קבוע" &&
-      Hcell.v === "מרכז בית יעקב כללי"
-    ) {
-      ws[xlsx.utils.encode_cell({ r: index, c: 6 })].v = 0;
-    }
-  }
+  xlsx.utils.sheet_add_json(
+    ws,
+    json.filter((row) => {
+      return (
+        !(
+          row["כותרת;"] !== "הכנסות" &&
+          row["כותרת;"] !== "רכוש קבוע" &&
+          row["עץ מרכזי רווח"] === "מרכז בית יעקב כללי"
+        ) && row["סכום 2"] !== 0
+      );
+    })
+  );
 };
 
 function updateSources(noSources, sources) {
@@ -196,18 +147,29 @@ function updateSources(noSources, sources) {
 }
 
 const makePivot = (file) => {
-  const { spawn } = require("child_process");
-  const pythonProcess = spawn("python", ["./assets/Modules/py.py", file]);
-  pythonProcess.stdout.on("data", (data) => {
-    console.log("data: ", data.toString());
-  });
+  const { execFile, spawn } = require("child_process");
+  const isDev = ipcRenderer.sendSync("isDev");
+  var pythonProcess;
+  if (isDev) {
+    pythonProcess = spawn("python", [path.join(__dirname, "Pivot.py"), file]);
+  } else
+    if (existsSync('./resources/pydistpivot/Pivot/Pivot.exe')) {
+      pythonProcess = execFile('./resources/pydistpivot/Pivot/Pivot.exe', [file]);
+      pythonProcess.stdout.on("data", (data) => {
+        console.log("data: ", data.toString());
+      });
 
-  pythonProcess.stderr.on("data", (data) => {
-    console.log(`stderr: ${data}`);
-  });
-  pythonProcess.on("exit", (code, signal) => {
-    console.log(`exited with code ${code} and signal ${signal}`);
-  });
+      pythonProcess.stderr.on("data", (data) => {
+        console.log(`stderr: ${data}`);
+        alert(data);
+      });
+      pythonProcess.on("exit", (code, signal) => {
+        console.log(`exited with code ${code} and signal ${signal}`);
+        shell.openPath(file);
+      });
+      console.log("pivot created");
+    }
+    else { alert('not exist') }
 };
 
 const save = () => {
@@ -238,6 +200,7 @@ const excel = async (gainLoseFile, sources, loading, fixAssetsFile) => {
           console.log(err);
           alert("בעיה");
         });
+      console.log("done");
     })
     .catch((err) => {
       console.log(err);

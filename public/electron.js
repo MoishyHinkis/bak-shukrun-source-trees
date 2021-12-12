@@ -1,7 +1,6 @@
 const path = require("path");
 const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const isDev = require("electron-is-dev");
-const { platform } = require("os");
 
 var win;
 var update;
@@ -68,4 +67,7 @@ ipcMain.on("update", (event, sources) => {
 
 ipcMain.on("setCenters", () => {
   dialog.showMessageBox({ message: "saved", type: "none", title: "saved" });
+});
+ipcMain.on("isDev", (event) => {
+  event.returnValue = isDev;
 });
