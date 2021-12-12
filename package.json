@@ -1,11 +1,11 @@
 {
-  "name": "excel-2",
+  "name": "profit_and_loss_for_organizations",
   "version": "0.1.0",
   "private": true,
   "author": {
     "name": "MoishyHinkis"
   },
-  "description": "I have no idea",
+  "description": "profit and loss for organizations",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
@@ -30,21 +30,22 @@
   "homepage": "./",
   "build": {
     "appId": "com.example.excel_2",
-    "productName": "EXCEL_2",
+    "productName": "רווח והפסד לארגונים",
     "files": [
       "build/**/*",
       "node_modules/**/*",
       "assets/**/*"
     ],
-    "extraResources":{
-      "from":"pydistpivot",
-      "to":"pydistpivot"
+    "extraResources": {
+      "from": "pydistpivot",
+      "to": "pydistpivot"
     },
     "directories": {
       "buildResources": "public"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "public/baklogo.ico"
     }
   },
   "scripts": {

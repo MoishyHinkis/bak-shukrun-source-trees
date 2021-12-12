@@ -25,8 +25,8 @@ function getCenters(dbName) {
       } else
         alert(
           "get centers: " +
-            data +
-            "this alert is shown because there a problem with this table, please talk to you'r manager"
+          data +
+          "this alert is shown because there a problem with this table, please talk to you'r manager"
         );
     });
   } else alert("database do not validate");
@@ -43,7 +43,7 @@ const validate = (dbName) => {
   let valid = false;
   if (
     fs.existsSync(
-      path.join(os.homedir(), `AppData/Roaming/excel-2/${dbName}.json`)
+      path.join(os.homedir(), `AppData/Roaming/profit_and_loss_for_organizations/${dbName}.json`)
     )
   ) {
     valid = db.valid(dbName);
@@ -79,7 +79,7 @@ const exportToXlsx = async (sheetName, sources, treeHeader, sourceHeader) => {
     }
   } catch (error) {
     console.log(error);
-    alert("שגיאה ביבוא הקובץ פנה למנהל");
+    alert("שגיאה ביצוא הקובץ פנה למנהל");
   }
 };
 const importFromXlsx = async (file, sheetName) => {

@@ -13,6 +13,7 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
+    icon: path.join(__dirname, 'baklogo.ico')
   });
 
   win.loadURL(
@@ -58,9 +59,9 @@ ipcMain.on("update", (event, sources) => {
     isDev
       ? `http://localhost:3000/#/update/${sources}`
       : `file://${path.join(
-          __dirname,
-          "../build/index.html#update"
-        )}/${sources}`
+        __dirname,
+        "../build/index.html#update"
+      )}/${sources}`
   );
   if (isDev) update.webContents.openDevTools({ mode: "detach" });
 });
